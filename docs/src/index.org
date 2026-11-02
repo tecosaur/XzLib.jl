@@ -1,0 +1,33 @@
+#+title: XzLib.jl
+
+Read and write =.xz= data with [[https://github.com/BioJulia/BufferIO.jl][BufferIO.jl]], including random access into files
+split into Blocks.
+
+#+begin_src julia
+using XzLib
+
+# Compress a file
+XzWriter(open("data.xz", "w")) do writer
+    write(writer, read("data"))
+end
+
+# Decompress it
+data = XzReader(read, open("data.xz"))
+
+# Read 100 bytes from the middle
+XzSeekableReader(open("data.xz")) do reader
+    seek(reader, 5_000_000)
+    read(reader, 100)
+end
+#+end_src
+
+#+begin_src @docs
+XzLib
+#+end_src
+
+* Comparison with CodecXz
+
+[[https://github.com/JuliaIO/CodecXz.jl][CodecXz.jl]] provides =.xz= codecs for [[https://github.com/JuliaIO/TranscodingStreams.jl][TranscodingStreams.jl]], so it slots in alongside the
+other TranscodingStreams codecs, such as CodecZlib and CodecZstd. XzLib began as a
+rewrite of CodecXz on BufferIO's interface, and adds random access and parallel
+decoding of any multi-Block file.

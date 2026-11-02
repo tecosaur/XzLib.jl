@@ -1,0 +1,7 @@
+[deps]
+XzLib = "ada9c6f8-7f05-44d5-bdd1-0df0192e5061"
+Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
+Org = "587fedb0-ad84-11e9-2bd6-d15ea4be1f9e"
+
+[sources]
+XzLib = {path = ".."}

@@ -1,0 +1,66 @@
+#+title: XzLib.jl
+#+author: tecosaur
+
+#+html: <a href="https://tecosaur.net"><img src="https://img.shields.io/badge/%F0%9F%A6%95-tec-27a560.svg"></a>
+#+html: <a href="https://tecosaur.github.io/XzLib.jl/stable/"><img src="https://img.shields.io/badge/docs-stable-blue.svg"></a>
+#+html: <a href="https://tecosaur.github.io/XzLib.jl/dev/"><img src="https://img.shields.io/badge/docs-dev-blue.svg"></a>
+#+html: <a href="https://coveralls.io/github/tecosaur/XzLib.jl"><img src="https://coveralls.io/repos/github/tecosaur/XzLib.jl/badge.svg"></a>
+#+html: <a href="https://www.tldrlegal.com/license/mozilla-public-license-2-0-mpl-2"><img src="https://img.shields.io/badge/license-MPL%202.0-teal.svg"></a>
+#+html: <a href="https://liberapay.com/tec"><img src="https://shields.io/badge/support%20my%20efforts-f6c915?logo=Liberapay&logoColor=black"></a>
+
+Read and write =.xz= data with [[https://github.com/BioJulia/BufferIO.jl][BufferIO.jl]], including random access into files
+split into Blocks.
+
+#+begin_src julia
+using XzLib
+
+text = "Lorem ipsum dolor sit amet,\nconsectetur adipiscing elit."
+
+# Whole buffers
+compressed = compress_xz(text)
+decompress_xz(compressed) == codeunits(text)  # true
+
+# Streams
+XzWriter(open("lorem.txt.xz", "w")) do writer
+    write(writer, text)
+end
+XzReader(open("lorem.txt.xz")) do reader
+    for line in eachline(reader)
+        println(line)
+    end
+end
+#+end_src
+
+~XzWriter~ is a BufferIO ~AbstractBufWriter~, and both readers are
+~AbstractBufReader~ subtypes. Wrap a reader in ~BufferIO.IOReader~ to use it as a
+~Base.IO~.
+
+* Random access
+
+~XzSeekableReader~ reads the file's Index when opened. ~seek~, ~skip~, and
+~position~ work in uncompressed offsets, and a read decodes from the start of the
+Block containing its first byte, so smaller Blocks make random reads faster.
+
+#+begin_src julia
+compressed = compress_xz(data; blocksize=1_000_000)
+reader = XzSeekableReader(IOBuffer(compressed))
+seek(reader, 5_000_000)
+read(reader, 100)
+#+end_src
+
+* Threads
+
+~XzWriter~ and ~XzReader~ use liblzma's threads, by default one per CPU.
+~XzSeekableReader~ decodes Blocks on Julia's threads, so start Julia with =-t=
+for parallel decoding. All three limit their parallelism to keep memory use
+within a quarter of RAM.
+
+With more than one thread, ~XzWriter~ writes each Block once it is complete.
+With one thread, it writes output as input arrives.
+
+* Acknowledgements
+
++ [[https://tukaani.org/xz/][XZ Utils]] :: Lasse Collin and contributors, for liblzma and the =.xz= format.
++ [[https://github.com/JuliaIO/CodecXz.jl][CodecXz.jl]] :: Kenta Sato, for the package XzLib grew out of and its liblzma bindings.
++ [[https://github.com/BioJulia/BufferIO.jl][BufferIO.jl]] and [[https://github.com/BioJulia/BGZFLib.jl][BGZFLib.jl]] :: Jakob Andersen, for the IO interface and the model
+  for decoding Blocks on worker tasks.

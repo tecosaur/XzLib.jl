@@ -1,0 +1,15 @@
+name = "XzLib"
+uuid = "ada9c6f8-7f05-44d5-bdd1-0df0192e5061"
+authors = ["TEC <git@tecosaur.net>"]
+version = "1.0.0"
+
+[deps]
+BufferIO = "ff366017-094f-4144-bd70-a828a0d67152"
+MemoryViews = "a791c907-b98b-4e44-8f4d-e4c2362c6b2f"
+XZ_jll = "ffd25f8a-64ca-5728-b0f7-c24cf3aae800"
+
+[compat]
+BufferIO = "0.3"
+MemoryViews = "0.5"
+XZ_jll = "5.4"
+julia = "1.11"
