@@ -21,6 +21,10 @@ XzSeekableReader(open("data.xz")) do reader
 end
 #+end_src
 
+#+begin_src @docs
+XzLib
+#+end_src
+
 * Comparison with CodecXz
 
 [[https://github.com/JuliaIO/CodecXz.jl][CodecXz.jl]] provides =.xz= codecs for [[https://github.com/JuliaIO/TranscodingStreams.jl][TranscodingStreams.jl]], and is the one to use with

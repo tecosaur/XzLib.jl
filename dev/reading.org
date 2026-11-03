@@ -17,11 +17,8 @@ Both wrap an ~AbstractBufReader~, or wrap an ~IO~ in a ~BufReader~ first. Closin
 reader closes its source, and passing a function as the first argument calls it
 on the reader and then closes it.
 
-#+begin_src julia-repl
-julia> reader = XzReader(IOBuffer(compress_xz("Hello, world!")));
-
-julia> String(read(reader))
-"Hello, world!"
+#+begin_src @docs
+XzReader
 #+end_src
 
 * Random access
@@ -29,18 +26,15 @@ julia> String(read(reader))
 A read from ~XzSeekableReader~ decodes from the start of the Block containing its
 first byte, so files written with smaller Blocks seek faster.
 
-#+begin_src julia-repl
-julia> data = repeat(b"0123456789", 100_000);
-
-julia> reader = XzSeekableReader(IOBuffer(compress_xz(data; blocksize=100_000)));
-
-julia> seek(reader, 654_321);
-
-julia> String(read(reader, 4))
-"1234"
+#+begin_src @docs
+XzSeekableReader
 #+end_src
 
 * Errors
 
 Corrupt or truncated data throws an [[@ref][~XzError~]]. An ~XzReader~ throws the same
 error on every later read, while an ~XzSeekableReader~ can be recovered by seeking.
+
+#+begin_src @docs
+XzError
+#+end_src
