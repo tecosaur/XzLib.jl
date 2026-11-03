@@ -1,0 +1,46 @@
+#+title: Reading
+
+XzLib has two readers, both BufferIO readers (~AbstractBufReader~):
+
++ [[@ref][~XzReader~]] decompresses =.xz= data as it is read, from any source, including
+  pipes and sockets. With more than one thread, it decodes Blocks in parallel when
+  they record their sizes.
++ [[@ref][~XzSeekableReader~]] reads the Index of complete =.xz= data from a seekable
+  source, and then supports ~seek~, ~skip~, ~position~ and ~filesize~ in uncompressed
+  offsets. It decodes Blocks ahead on Julia's threads, whether or not they record
+  their sizes.
+
+For files, use ~XzSeekableReader~ with Julia started with several threads (=-t=).
+For streams, or with a single Julia thread, use ~XzReader~.
+
+Both wrap an ~AbstractBufReader~, or wrap an ~IO~ in a ~BufReader~ first. Closing a
+reader closes its source, and passing a function as the first argument calls it
+on the reader and then closes it.
+
+#+begin_src julia-repl
+julia> reader = XzReader(IOBuffer(compress_xz("Hello, world!")));
+
+julia> String(read(reader))
+"Hello, world!"
+#+end_src
+
+* Random access
+
+A read from ~XzSeekableReader~ decodes from the start of the Block containing its
+first byte, so files written with smaller Blocks seek faster.
+
+#+begin_src julia-repl
+julia> data = repeat(b"0123456789", 100_000);
+
+julia> reader = XzSeekableReader(IOBuffer(compress_xz(data; blocksize=100_000)));
+
+julia> seek(reader, 654_321);
+
+julia> String(read(reader, 4))
+"1234"
+#+end_src
+
+* Errors
+
+Corrupt or truncated data throws an [[@ref][~XzError~]]. An ~XzReader~ throws the same
+error on every later read, while an ~XzSeekableReader~ can be recovered by seeking.

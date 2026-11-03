@@ -1,0 +1,26 @@
+#+title: API
+
+#+begin_src @docs
+XzLib
+#+end_src
+
+* Writing
+
+#+begin_src @docs
+XzWriter
+compress_xz
+#+end_src
+
+* Reading
+
+#+begin_src @docs
+XzReader
+XzSeekableReader
+decompress_xz
+#+end_src
+
+* Errors
+
+#+begin_src @docs
+XzError
+#+end_src
