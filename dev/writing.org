@@ -1,9 +1,10 @@
 #+title: Writing
 
 [[@ref][~XzWriter~]] is a BufferIO ~AbstractBufWriter~ that compresses what is written to
-it. Like the readers, it wraps an ~AbstractBufWriter~ or an ~IO~, and closing it
-finishes the =.xz= data and closes the sink. ~flush~ ends the current Block, so
-that everything written so far can be decoded.
+it. Like the readers, it writes to an ~AbstractBufWriter~, wrapping a plain ~IO~
+in a ~BufWriter~ first. Closing it finishes the =.xz= data and closes the sink,
+and ~flush~ ends the current Block, so that everything written so far can be
+decoded.
 
 #+begin_src @docs
 XzWriter
@@ -11,10 +12,9 @@ XzWriter
 
 * Whole buffers
 
-[[@ref][~compress_xz~]] and [[@ref][~decompress_xz~]] take the same keywords as ~XzWriter~ and
-~XzReader~.
+[[@ref][~compress_xz~]] compresses anything ~write~ accepts in one call, and takes the same
+keywords as ~XzWriter~.
 
 #+begin_src @docs
 compress_xz
-decompress_xz
 #+end_src

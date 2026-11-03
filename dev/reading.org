@@ -1,6 +1,6 @@
 #+title: Reading
 
-XzLib has two readers, both BufferIO readers (~AbstractBufReader~):
+XzLib provides two BufferIO readers (~AbstractBufReader~):
 
 + [[@ref][~XzReader~]] decompresses =.xz= data as it is read, from any source, including
   pipes and sockets. With more than one thread, it decodes Blocks in parallel when
@@ -10,12 +10,13 @@ XzLib has two readers, both BufferIO readers (~AbstractBufReader~):
   offsets. It decodes Blocks ahead on Julia's threads, whether or not they record
   their sizes.
 
-For files, use ~XzSeekableReader~ with Julia started with several threads (=-t=).
-For streams, or with a single Julia thread, use ~XzReader~.
+For files, use ~XzSeekableReader~, and start Julia with several threads (=-t=) so
+it can decode in parallel. For streams, or with a single Julia thread, use
+~XzReader~.
 
-Both wrap an ~AbstractBufReader~, or wrap an ~IO~ in a ~BufReader~ first. Closing a
-reader closes its source, and passing a function as the first argument calls it
-on the reader and then closes it.
+Both read from an ~AbstractBufReader~, wrapping a plain ~IO~ in a ~BufReader~
+first. Closing a reader closes its source, and passing a function as the first
+argument calls it on the reader, then closes the reader.
 
 #+begin_src @docs
 XzReader
@@ -28,6 +29,15 @@ first byte, so files written with smaller Blocks seek faster.
 
 #+begin_src @docs
 XzSeekableReader
+#+end_src
+
+* Whole buffers
+
+[[@ref][~decompress_xz~]] decompresses a byte vector or string in one call, and takes the
+same keywords as ~XzReader~.
+
+#+begin_src @docs
+decompress_xz
 #+end_src
 
 * Errors

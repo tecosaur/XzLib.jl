@@ -27,7 +27,7 @@ XzLib
 
 * Comparison with CodecXz
 
-[[https://github.com/JuliaIO/CodecXz.jl][CodecXz.jl]] provides =.xz= codecs for [[https://github.com/JuliaIO/TranscodingStreams.jl][TranscodingStreams.jl]], and is the one to use with
-other TranscodingStreams packages. XzLib started as a rewrite of CodecXz. It uses
-BufferIO's interface instead, and adds random access and parallel decoding of any
-multi-Block file.
+[[https://github.com/JuliaIO/CodecXz.jl][CodecXz.jl]] provides =.xz= codecs for [[https://github.com/JuliaIO/TranscodingStreams.jl][TranscodingStreams.jl]], so it slots in alongside the
+other TranscodingStreams codecs, such as CodecZlib and CodecZstd. XzLib began as a
+rewrite of CodecXz on BufferIO's interface, and adds random access and parallel
+decoding of any multi-Block file.
